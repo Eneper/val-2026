@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Surprise ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #fff5f5; font-family: 'Segoe UI', sans-serif; overflow: hidden; margin: 0; }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+            font-size: 80px;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Beri transisi agar perpindahan posisi terlihat halus (tidak langsung hilang) */
+        #noButton { 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            z-index: 100;
+        }
+        
+        .heart-bg {
+            position: absolute; color: #fda4af; opacity: 0.4; z-index: 0;
+            animation: fall 5s linear infinite;
+        }
+        @keyframes fall { to { transform: translateY(110vh); } }
+    </style>
+</head>
+<body class="h-screen w-screen flex items-center justify-center">
+
+    <div id="quiz-container" class="relative text-center p-10 bg-white rounded-3xl shadow-2xl max-w-sm w-full mx-4 border-t-8 border-rose-400 z-10">
+        <div id="content-wrapper">
+            <div id="icon-display" class="floating mb-6 text-7xl">🐱</div>
+            
+            <h1 id="question-text" class="text-2xl font-bold text-gray-800 mb-8 px-2">
+                Mau jadi Valentine-ku? ❤️
+            </h1>
+
+            <div id="button-group" class="flex justify-center items-center gap-4 h-14">
+                <button id="yesButton" 
+                    class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-110 active:scale-95">
+                    Mau!
+                </button>
+
+                <button id="noButton" 
+                    class="bg-gray-200 text-gray-500 font-bold py-3 px-8 rounded-full shadow-md">
+                    Enggak
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noButton');
+        const yesBtn = document.getElementById('yesButton');
+        const iconDisplay = document.getElementById('icon-display');
+        const wrapper = document.getElementById('content-wrapper');
+
+        const moveButton = () => {
+            // Kita paksa posisinya jadi fixed agar relatif terhadap layar browser, bukan kotak putih
+            noBtn.style.position = 'fixed';
+            
+            // Batasi area kabur (margin 100px dari tepi layar agar tidak hilang/terpotong)
+            const margin = 100;
+            const maxWidth = window.innerWidth - noBtn.offsetWidth - margin;
+            const maxHeight = window.innerHeight - noBtn.offsetHeight - margin;
+            
+            // Hitung posisi baru secara acak tapi tetap aman di layar
+            const newX = Math.max(margin, Math.floor(Math.random() * maxWidth));
+            const newY = Math.max(margin, Math.floor(Math.random() * maxHeight));
+            
+            noBtn.style.left = `${newX}px`;
+            noBtn.style.top = `${newY}px`;
+            
+            iconDisplay.innerText = "🥺";
+        };
+
+        // Pasang event kabur
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('click', (e) => {
+            // Jika dia berhasil klik (sangat jarang), kita pindahkan lagi!
+            moveButton();
+        });
+
+        // Yes Button Action
+        yesBtn.addEventListener('click', () => {
+            noBtn.style.display = 'none';
+            // Munculkan hujan hati
+            for(let i=0; i<15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-bg';
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = '-5vh';
+                heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                document.body.appendChild(heart);
+            }
+
+            wrapper.innerHTML = `
+                <div class="floating mb-6 text-7xl">🥰</div>
+                <h1 class="text-3xl font-bold text-rose-600 mb-2">YAY! ❤️</h1>
+                <p class="text-gray-600 font-medium px-4">See you on Feb 14th!</p>
+                <div class="mt-8 text-[10px] text-gray-300 font-mono uppercase tracking-tighter">Status: Connection_Accepted</div>
+            `;
+        });
+    </script>
+</body>
+</html>
